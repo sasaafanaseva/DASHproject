@@ -1,0 +1,15 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+    <h1>они пытались</h1>
+    {% if tasks %}
+        {% for el in tasks %}
+            <div class="alert-warning mt-2">
+                <h3>{{ el.title }}</h3>
+                <p>{{ el.task }}</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Этот мальчик зайчик не добавлен в базу. Добавь его!</p>
+    {% endif %}
+{% endblock %}
