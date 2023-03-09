@@ -2,6 +2,8 @@
 
 {% block content %}
     <h1>они пытались</h1>
+
+
     {% if tasks %}
         {% for el in tasks %}
             <div class="alert-warning mt-2">
@@ -10,6 +12,16 @@
             </div>
         {% endfor %}
     {% else %}
-        <p>Этот мальчик зайчик не добавлен в базу. Добавь его!</p>
+        <article class="main-article text-dark">
+                    <div class="main-article__content">
+                        <h2 class="main-article__header">Что это?</h2>
+                        <p class ="main-article__paragraph">Наше приложение поможет людям оценивать друг друга. Так ты быстрее поймешь каких людей нужно отпустить
+                            из своей жизни еще до встречи с психотерапевтом</p>
+                    </div>
+                <p>Этот мальчик зайчик не добавлен в базу. Добавь его!</p>
+                <p class="copy">
+                    <a class="text-dark">♡ hse girls project ♡</a>
+                </p>
+        </article>
     {% endif %}
 {% endblock %}
