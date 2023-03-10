@@ -49,7 +49,7 @@ def dobav_ballov(paren, age, ball, postupok): #если парень сущес�
                     writer.writerow({'name': row['name'], 'age': row['age'], 'ball': row['ball'], 'move': row['move']})
                 else:
                     new_ball = int(row['ball']) + ball
-                    new_postupok = postupok + "и" + row['move']
+                    new_postupok = postupok + "и " + row['move']
                     writer.writerow({'name': paren, 'age': age, 'ball': new_ball, 'move': new_postupok})
     file.close()
     csvfile.close()
