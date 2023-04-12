@@ -4,8 +4,11 @@
 <h1>Регистрация</h1>
 <form action="/signup" method="post">
     {% csrf_token %}
-    <label for="">Твое имя</label>
+    <label for="">Ник</label>
     <input type="text" id="username" name="username" placeholder="любой ник" Required>
+    <br>
+    <label for="">Имя</label>
+    <input type="text" id="fname" name="fname" placeholder="имя" Required>
     <br>
     <label for="">Возраст</label>
     <input type="text" id="age" name="age" Required>

@@ -1,3 +1,4 @@
+from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from .models import Tasks
 from .forms import TasksForm
@@ -5,6 +6,11 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+
+# from ..taskmanager import settings
+
+
+#from urod.taskmanager.taskmanager import settings
 
 
 def index(request):
@@ -20,17 +26,46 @@ def signup(request):
     if request.method == "POST":
         # username = request.POST.get('username')
         username = request.POST['username']
+        fname = request.POST['fname']
         age = request.POST['age']
         email = request.POST['email']
         pass1 = request.POST['pass1']
         pass2 = request.POST['pass2']
 
+        if User.objects.filter(username=username):
+            messages.error(request, "Username already exist")
+            return redirect('about')
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Email Already Registered")
+            return redirect('about')
+
+        if len(username) > 10:
+            messages.error(request, "Username must be under 10 charcters")
+            return redirect('about')
+
+        if pass1 != pass2:
+            messages.error(request, "Passwords didn't matched")
+            return redirect('about')
+
+        if not username.isalnum():
+            messages.error(request, "Username must be Alpha-Numeric")
+            return redirect('about')
+
         myuser = User.objects.create_user(username, email, pass1)
-        myuser.username = username
+        myuser.first_name = fname
 
         myuser.save()
 
         messages.success(request, "Ура ты новый пользователь приложения! Рады видеть тебя здесь")
+
+        # # Welcome Email
+        #
+        # subject = "Welcome to DASH"
+        # message = "Привет" + myuser.first_name + ".Добро пожаловать в наше приложение"
+        # from_email = settings.EMAIL_HOST_USER
+        # to_list = [myuser.email]
+        # send_mail(subject, message, from_email, to_list, fail_silently=True)
 
         return redirect('signin')
 
@@ -46,20 +81,20 @@ def signin(request):
 
         if user is not None:
             login(request, user)
-            username = user.usermane
-            return render(request, "main/lk.html", {"username": username})
+            fname = user.first_name
+            return render(request, "main/lk.html", {'fname': fname})
 
         else:
             messages.error(request, "Те тот пароль, иди вспоминай")
-            return redirect("about")
+            return redirect('about')
 
-    return render(request, 'main/signin.html')
+    return render(request, "main/signin.html")
 
 
 def signout(request):
     logout(request)
     messages.success(request, "ты вышла из аккаунта")
-    return redirect("home")
+    return redirect('home')
 
 
 def create(request):

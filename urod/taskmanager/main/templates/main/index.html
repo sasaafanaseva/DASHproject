@@ -1,14 +1,18 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-    <h1>они пытались</h1>
-
-
     {% if tasks %}
         {% for el in tasks %}
-            <div class="alert-warning mt-2">
-                <h3>{{ el.title }}</h3>
-                <p>{{ el.task }}</p>
+            <div class="row">
+                <div class="alert-warning mt-2">
+                    <div class="card">
+                        <div class="card-details">
+                        <p class="text-title">{{ el.title }}</p>
+                        <p class="text-body">{{ el.task }}</p>
+                        </div>
+                    <button class="card-button2">почитать</button>
+                    </div>
+                </div>
             </div>
         {% endfor %}
     {% else %}

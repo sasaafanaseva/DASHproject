@@ -11,8 +11,8 @@
     {% endfor %}
 
     {% if user.is_authenticated %}
+    <h3>Привет {{ fname }}</h3>
 
-    <h3>Привет {{ username }}</h3>
     <button type="submit"><a href="/signout"> SignOut </a></button>
     {% else %}
     <button type="submit"><a href="/signup"> SignUp </a></button>
