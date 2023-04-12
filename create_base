@@ -1,0 +1,40 @@
+import psycopg2
+from psycopg2 import Error
+
+try:
+    connection = psycopg2.connect(
+        dbname="postgres",
+        user="postgres",
+        host="127.0.0.1",
+        password="dash")
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+           """CREATE TABLE parni(
+               id serial PRIMARY KEY,
+               us_name varchar(50) NOT NULL,
+               age smallint,
+               ball int,
+               move varchar(50) ARRAY);"""
+        )
+        connection.commit()
+        cursor.execute("""
+                  INSERT INTO parni(us_name, age, ball, move) VALUES
+                      ('Kirill Semenkovich', 18,  1000000, '{krash}'),
+                      ('Aleksandr Tiagello', 18, 100, '{krash}'),
+                      ('Anton Proshin', 19, 85, '{krash}'),
+                      ('Timofei Sosnin', 18, 20, '{krash}'),
+                      ('Arseniy Barashko', 19, 75, '{krash}'),
+                      ('Kirill Sleptsov', 18, -100, '{krash}');
+                """)
+        connection.commit()
+
+
+except (Exception, Error) as error:
+    print("Ошибка при работе с PostgreSQL", error)
+
+finally:
+    if connection:
+        # cursor.close()
+        connection.close()
+        print("Соединение с PostgreSQL закрыто")
