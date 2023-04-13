@@ -5,10 +5,8 @@ try:
     connection = psycopg2.connect(
         dbname="postgres",
         user="postgres",
-        host="0.0.0.0",
-        port='80',
-        password="pass"
-    )
+        host="127.0.0.1",
+        password="dash")
 
     with connection.cursor() as cursor:
         cursor.execute(
@@ -16,27 +14,32 @@ try:
                id serial PRIMARY KEY,
                us_name varchar(50) NOT NULL,
                age smallint,
-               ball int,
+               score int,
                move varchar(50) ARRAY);"""
         )
         connection.commit()
         cursor.execute("""
-                  INSERT INTO parni(us_name, age, ball, move) VALUES
-                      ('Kirill Semenkovich', 18,  1000000, '{krash}'),
+                  INSERT INTO parni(us_name, age, score, move) VALUES
+                      ('Kirill Semenkovich', 18,  1000000, '{superkrash}'),
+                      ('Daniil Plotnikov', 21, 999999, '{krash(ne hotim dopsy)}'),
                       ('Aleksandr Tiagello', 18, 100, '{krash}'),
-                      ('Anton Proshin', 19, 85, '{krash}'),
-                      ('Timofei Sosnin', 18, 20, '{krash}'),
-                      ('Arseniy Barashko', 19, 75, '{krash}'),
-                      ('Kirill Sleptsov', 18, -100, '{krash}');
+                      ('Anton Proshin', 19, 85, '{napisal tre treka pro love}'),
+                      ('Timofei Sosnin', 18, 80, '{zalill zadachi na git}'),
+                      ('Arseniy Barashko', 19, 75, '{doves poliny do doma}'),
+                      ('Kirill Sleptsov', 18, -100, '{toxik}'),
+                      ('Pasha Ilin', 18, 95, '{pomog no nemnogo bulil}');
+
                 """)
         connection.commit()
-
+    #     cursor.execute(
+    #         """DROP TABLE parni;"""
+    #     )
+    # connection.commit()
 
 except (Exception, Error) as error:
     print("Ошибка при работе с PostgreSQL", error)
 
 finally:
     if connection:
-        # cursor.close()
         connection.close()
         print("Соединение с PostgreSQL закрыто")
