@@ -5,8 +5,10 @@ try:
     connection = psycopg2.connect(
         dbname="postgres",
         user="postgres",
-        host="127.0.0.1",
-        password="dash")
+        host="0.0.0.0",
+        port='80',
+        password="pass"
+    )
 
     with connection.cursor() as cursor:
         cursor.execute(

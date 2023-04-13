@@ -4,6 +4,7 @@ import click
 import csv
 import os
 global mydict
+from logging import Logger
 
 def paren_v_base(name):
     with connection.cursor() as cursor:
@@ -31,15 +32,15 @@ def hochy_parnia(paren, age, ball, postupok):  # по name определяем 
 def dobav_parnia(paren, ag, bal, postupok): # полное добавление парня
     with connection.cursor() as cursor:
 
-        cursor.execute("""
+        cursor.execute(f"""
                 INSERT INTO parni(us_name, age, ball, move) VALUES
-                    ('Pasha Ilin', 18, 89, '{nemnogo bulil sashy}');
-                """)
+                    ('{paren}', {ag}, {bal}, ARRAY['{postupok}']);
+                """) # f-string {}
         connection.commit()
 
 def dobav_ballov(paren, age, bal, postupok):  # если парень существует, то обновим его баллы
         with connection.cursor() as cursor:
-            cursor.execute("""UPDATE parni SET ball = ball + bal, move = array_append(move, postupok) WHERE us_name = paren;""")
+            cursor.execute(f"""UPDATE parni SET ball = ball + {bal}, move = array_append(move, '{postupok}') WHERE us_name = '{paren}';""")
         connection.commit()
 
 
@@ -88,7 +89,7 @@ def hello(name, age, ball, move):  # функция вызывающая дру�
         if move[0] == "ball":
             filter_po_ball(move[1])
     else:
-        #hochy_parnia(paren, age, ball, postupok)
+        hochy_parnia(paren, age, ball, postupok)
         #print(paren_v_base(paren))
         dobav_ballov(paren, age, ball, postupok)
         #dobav_parnia(paren, age, ball, postupok)
@@ -97,8 +98,10 @@ try:
     connection = psycopg2.connect(
         dbname="postgres",
         user="postgres",
-        host="127.0.0.1",
-        password="dash")
+        host="0.0.0.0",
+        password="pass",
+        port='8080'
+    )
     if __name__ == '__main__':
         hello()
 
@@ -109,4 +112,3 @@ finally:
     if connection:
         connection.close()
         print("Соединение с PostgreSQL закрыто")
-
