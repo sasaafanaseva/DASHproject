@@ -73,13 +73,13 @@ def signup(request):
 
 
 def signin(request):
-    if request.method == "POST":
+    if request.method == "POST": #вход в аккаунт
         username = request.POST['username']
         pass1 = request.POST['pass1']
 
         user = authenticate(usermane=username, password=pass1)
 
-        if user is not None:
+        if user is not None: #если правильно вошли в аккаунт
             login(request, user)
             fname = user.first_name
             return render(request, "main/lk.html", {'fname': fname})
@@ -91,16 +91,16 @@ def signin(request):
     return render(request, "main/signin.html")
 
 
-def signout(request):
+def signout(request): #выход из аккаунта
     logout(request)
     messages.success(request, "ты вышла из аккаунта")
     return redirect('home')
 
 
-def create(request):
+def create(request): #создание парня
     error = ''
     if request.method == 'POST':
-        form = TasksForm(request.POST)
+        form = TasksForm(request.POST) #имя парня и поступок лежат в переменной form
         if form.is_valid():
             form.save()
             return redirect('home')

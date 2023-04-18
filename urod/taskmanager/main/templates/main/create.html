@@ -5,6 +5,8 @@
     <form method="post">
         {% csrf_token %}
         {{ form.title }}<br>
+        {{ form.boy_age }}<br>
+        {{ form.score }}<br>
         {{ form.task }}<br>
         <button> добавить </button>
         <span>{{ error }}</span>

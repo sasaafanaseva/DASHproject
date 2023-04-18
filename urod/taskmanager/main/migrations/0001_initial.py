@@ -16,6 +16,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=50, verbose_name='ФИО')),
+                ('boy_age', models.CharField(max_length=50, verbose_name='18')),
+                ('score', models.CharField(max_length=50, verbose_name='10')),
                 ('task', models.TextField(verbose_name='проступок')),
             ],
         ),

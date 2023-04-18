@@ -1,8 +1,10 @@
 from django.db import models
 
 
-class Tasks(models.Model):
+class Tasks(models.Model): #запоминаем поступок
     title = models.CharField('ФИО', max_length=50)
+    boy_age = models.CharField('18', max_length=50)
+    score = models.CharField('10', max_length=50)
     task = models.TextField('проступок')
 
     def __str__(self):
