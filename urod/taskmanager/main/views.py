@@ -1,4 +1,5 @@
 from django.core.mail import send_mail
+from django.db.backends import sqlite3
 from django.shortcuts import render, redirect
 from .models import Tasks
 from .forms import TasksForm
@@ -6,11 +7,37 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+import logging
+import sqlite3
+global mydict
 
 # from ..taskmanager import settings
 
 
 #from urod.taskmanager.taskmanager import settings
+
+## вставлено сашей
+
+def boy_exists(paren): #проверка на существование парня в базе
+    with sqlite3.connect('sqlite_python.db') as connection:
+        cursor = connection.cursor()
+        cursor.execute("""SELECT us_name FROM main_tasks""")
+        df = cursor.fetchall()
+        for i in df:
+            if i[0] == paren:
+                return True
+        return False
+
+def add_ball(paren, ball, postupok):  # если парень существует, то обновим его балл
+    with sqlite3.connect('sqlite_python.db') as connection:
+        cursor = connection.cursor()
+        cursor.execute(f"""SELECT move FROM main_tasks WHERE us_name = '{paren}';""")
+        pos = cursor.fetchall()[0]
+        post = str(pos)[2:-3] + ', ' + postupok
+        cursor.execute(f"""UPDATE main_tasks SET score = score + {ball}, move = '{post}' WHERE us_name = '{paren}';""")
+        connection.commit()
+
+## нормальное продолжение полины
 
 
 def index(request):
@@ -54,9 +81,7 @@ def signup(request):
 
         myuser = User.objects.create_user(username, email, pass1)
         myuser.first_name = fname
-
         myuser.save()
-
         messages.success(request, "Ура ты новый пользователь приложения! Рады видеть тебя здесь")
 
         # # Welcome Email
@@ -96,14 +121,20 @@ def signout(request): #выход из аккаунта
     messages.success(request, "ты вышла из аккаунта")
     return redirect('home')
 
-
 def create(request): #создание парня
     error = ''
     if request.method == 'POST':
         form = TasksForm(request.POST) #имя парня и поступок лежат в переменной form
         if form.is_valid():
-            form.save()
-            return redirect('home')
+            if boy_exists(form.title):
+                add_ball(form.title, form.score, form.task)
+                return redirect('home')
+            else:
+                form.save()
+                return redirect('home')
+                # my_boy(form.title, form.boy_age, form.score, form.task)
+            # form.save()
+            # return redirect('home')
         else:
             error = "введи нормально пжпж"
 
