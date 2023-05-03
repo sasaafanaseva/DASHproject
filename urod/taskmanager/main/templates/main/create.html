@@ -1,0 +1,14 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+    <h1>добавить парня</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.title }}<br>
+        {{ form.boy_age }}<br>
+        {{ form.score }}<br>
+        {{ form.task }}<br>
+        <button> добавить </button>
+        <span>{{ error }}</span>
+    </form>
+{% endblock %}
