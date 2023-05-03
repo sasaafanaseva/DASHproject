@@ -1,4 +1,5 @@
 from .forms import LoginForm
+from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
 from django.db.backends import sqlite3
 from django.shortcuts import render, redirect
@@ -96,18 +97,16 @@ def signin(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            cd = form.cleaned_data
-            user = authenticate(username=cd['username'], pass1=cd['pass1'])
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    return redirect('home')
-                else:
-                    messages.error(request, 'Your account is disabled')
-                    return redirect('home')
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_pass = form.cleaned_data.get('pass1')
+            # raw_pass = make_password(form.cleaned_data.get('pass1'))
+            user = form.save() #вот эти 2 строчки должны решать мою ошибку как говорят все сайты, но оно не работает 
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            return redirect('home')
     else:
         form = LoginForm()
-    return render(request, 'home')
+    return render(request, 'main/signin.html', {'form': form})
 
 
 
