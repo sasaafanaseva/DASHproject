@@ -21,7 +21,7 @@ class LoginForm(forms.Form):
 class TasksForm(ModelForm): #класс для парня
     class Meta:
         model = Tasks
-        fields = ["title", "boy_age", "score", "task"]
+        fields = ["title", "boy_age", "size"]
         widgets = {
             "title": TextInput(attrs={
                 'class': 'form-control',
@@ -31,12 +31,8 @@ class TasksForm(ModelForm): #класс для парня
                 'class': 'form-control',
                 'placeholder': 'Введи возраст'
             }),
-            "score": TextInput(attrs={
+            "size": TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Введи баллы'
-            }),
-            "task": Textarea(attrs={
-                'class': 'form-control',
-                'placeholder': 'Его поступок:'
+                'placeholder': 'выбор:'
             }),
         }
