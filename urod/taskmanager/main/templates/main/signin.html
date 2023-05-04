@@ -1,0 +1,15 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<h1>Вход</h1>
+<form action="/signin" method="post">
+    {% csrf_token %}
+    <label for="">Твой ник</label>
+    <input type="text" id="username" name="username" Required>
+    <br>
+    <label for="">Пароль</label>
+    <input type="password" id="pass1" name="pass1" Required>
+    <br>
+    <button type="submit">Sign in</button>
+</form>
+{% endblock %}

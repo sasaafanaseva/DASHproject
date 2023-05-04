@@ -1,0 +1,41 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    <strong>Message:</strong> {{ message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+    </button>
+    </div>
+    {% endfor %}
+    {% if tasks %}
+        <div class="row">
+            {% for el in tasks %}
+                <div class="alert-warning mt-2 ml-2">
+                    <div class="card">
+                        <div class="card-details">
+                        <p class="text-title">{{ el.title }}</p>
+                        <p class="text-boy_age">{{ el.boy_age }}</p>
+                        <p class="text-score">{{ el.score }}</p>
+                        <p class="text-body">{{ el.size }}</p>
+                        </div>
+                    <button class="card-button2">почитать</button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <article class="main-article text-dark">
+                    <div class="main-article__content">
+                        <h2 class="main-article__header">Что это?</h2>
+                        <p class ="main-article__paragraph">Наше приложение поможет людям оценивать друг друга. Так ты быстрее поймешь каких людей нужно отпустить
+                            из своей жизни еще до встречи с психотерапевтом</p>
+                    </div>
+                <p>Этот мальчик зайчик не добавлен в базу. Добавь его!</p>
+                <p class="copy">
+                    <a class="text-dark">♡ hse girls project ♡</a>
+                </p>
+        </article>
+    {% endif %}
+{% endblock %}
