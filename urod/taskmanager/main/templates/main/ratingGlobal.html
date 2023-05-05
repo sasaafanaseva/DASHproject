@@ -1,0 +1,16 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+    <h3>Глобальный рейтинг</h3>
+    <a>тут можно посмотреть на баллы всех мальчиков-зайчиков, которых добавляли ♡</a>
+
+    {% if tasks %}
+            {% for el in tasks %}
+                <div class="alert-warning mt-2 ml-2">
+                        <p class="text-title">{{ el.title }}, {{ el.boy_age }}</p>
+                        <p class="text-score">{{ el.score }}, {{ el.size }}</p>
+                </div>
+            {% endfor %}
+    {% endif %}
+
+{% endblock %}
