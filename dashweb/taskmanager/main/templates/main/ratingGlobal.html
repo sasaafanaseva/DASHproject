@@ -1,0 +1,86 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+    <br>
+    <h3>Глобальный рейтинг</h3>
+    <p class="text-center">тут можно посмотреть на баллы всех мальчиков-зайчиков, которых добавляли ♡</p>
+    <style>
+        table {
+            width: 100%;
+            border: none;
+            margin: auto;
+        }
+
+        th {
+            padding: 10px;
+	        font-weight: 500;
+	        font-size: 16px;
+            line-height: 18px;
+            color: rgb(78, 52, 100);
+            border-top: 2px solid rgb(78, 52, 100);
+            border-bottom: 2px solid #4e3464;
+            text-align: center;
+        }
+
+        td {
+            padding: 10px;
+            font-size: 14px;
+            line-height: 20px;
+            color: #444441;
+            border-top: 1px solid #716561;
+            text-align: center;
+        }
+
+        tr:nth-child(even) {
+          background-color: #f2f2f2
+        }
+    </style>
+
+    <p class="text-center">нажми, чтобы отсортировать таблицу по баллам</p>
+<!--    <script src="/main/js/min.js"></script>-->
+    <p class="text-center"><button onclick="sortTable()">сортировать</button></p>
+    <table id="myTable">
+        <tr>
+            <th>балл</th>
+            <th>имя фамилия (возраст)</th>
+        </tr>
+        {% if tasks %}
+            {% for el in tasks %}
+                <tr>
+                    <td>{{ el.score }}</td>
+                    <td>{{ el.title }} ({{ el.boy_age }})</td>
+                </tr>
+<!--                <div class="alert-warning mt-2 ml-2">-->
+<!--                        <p class="text-title">{{ el.title }}, {{ el.boy_age }}</p>-->
+<!--                        <p class="text-score">{{ el.score }}, {{ el.size }}</p>-->
+<!--                </div>-->
+            {% endfor %}
+        {% endif %}
+    </table>
+    <script>
+        function sortTable() {
+        var table, rows, switching, i, x, y, shouldSwitch;
+        table = document.getElementById("myTable");
+        switching = true;
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("TD")[0];
+                y = rows[i + 1].getElementsByTagName("TD")[0];
+                if (Number(x.innerHTML) < Number(y.innerHTML)) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+            if (shouldSwitch) {
+              rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+              switching = true;
+            }
+        }
+    }
+    </script>
+
+
+{% endblock %}
