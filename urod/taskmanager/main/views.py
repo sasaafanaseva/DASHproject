@@ -1,3 +1,5 @@
+from pandas.io.sql import table_exists
+
 from .forms import LoginForm
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
@@ -157,6 +159,12 @@ def home(request):
     return render(request, "main/lk.html")
 
 
+def rating(request):
+    tasks = Tasks.objects.all()
+    return render(request, 'main/ratingGlobal.html', {'title': 'Главная страница сайта', 'tasks': tasks})
+
+
+
 def signup(request):
     if request.method == "POST":
         username = request.POST['username']
@@ -258,6 +266,8 @@ def signout(request):
 
 def create(request): #создание парня
     create_base()
+    # if not table_exists:
+    #     create_base()
     error = ''
     if request.method == 'POST':
         form = TasksForm(request.POST) #имя парня и поступок лежат в переменной form
