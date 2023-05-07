@@ -19,7 +19,7 @@ from django.db.models import F
 # from ..taskmanager import settings
 
 
-#from urod.taskmanager.taskmanager import settings
+#from dashweb.taskmanager.taskmanager import settings
 
 ## вставлено сашей
 
@@ -261,7 +261,6 @@ def signout(request):
     logout(request)
     messages.success(request, "дам пока пока")
     return redirect('home')
-
 
 
 def create(request): #создание парня
