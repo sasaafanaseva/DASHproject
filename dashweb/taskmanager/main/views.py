@@ -1,5 +1,3 @@
-from pandas.io.sql import table_exists
-
 from .forms import LoginForm
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
@@ -164,6 +162,10 @@ def rating(request):
     return render(request, 'main/ratingGlobal.html', {'title': 'Главная страница сайта', 'tasks': tasks})
 
 
+def deed(request):
+    tasks = Tasks.objects.all()
+    return render(request, "main/deeds.html", {'title': 'Главная страница сайта', 'tasks': tasks})
+
 
 def signup(request):
     if request.method == "POST":
@@ -276,7 +278,7 @@ def create(request): #создание парня
                 cursor.execute(f"""select score from postupok WHERE move = '{form.data['size']}';""")
                 ball = int(cursor.fetchall()[0][0]) #получаем балл за поступок
             if boy_exists(form.data['title']):
-                postupok = str(Tasks.objects.get(title=form.data['title']).size) + "\n" + form.data['size']
+                postupok = str(Tasks.objects.get(title=form.data['title']).size) + "\n" + str(form.data['size'])
                 Tasks.objects.filter(title=form.data['title']).update(score=F("score") + ball, size = postupok)
                 messages.success(request, "твой парень уже есть в базе, ему добавлен новый поступок")
             else:
@@ -284,7 +286,7 @@ def create(request): #создание парня
                 messages.success(request, "ты его единственная, парень добавлен в базу")
             return redirect('home')
         else:
-            error = "введи нормально пжпж"
+            error = "неправильно введены данные"
 
     form = TasksForm()
     context = {

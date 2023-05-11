@@ -37,7 +37,6 @@
     </style>
 
     <p class="text-center">нажми, чтобы отсортировать таблицу по баллам</p>
-<!--    <script src="/main/js/min.js"></script>-->
     <p class="text-center"><button onclick="sortTable()">сортировать</button></p>
     <table id="myTable">
         <tr>
@@ -50,10 +49,6 @@
                     <td>{{ el.score }}</td>
                     <td>{{ el.title }} ({{ el.boy_age }})</td>
                 </tr>
-<!--                <div class="alert-warning mt-2 ml-2">-->
-<!--                        <p class="text-title">{{ el.title }}, {{ el.boy_age }}</p>-->
-<!--                        <p class="text-score">{{ el.score }}, {{ el.size }}</p>-->
-<!--                </div>-->
             {% endfor %}
         {% endif %}
     </table>

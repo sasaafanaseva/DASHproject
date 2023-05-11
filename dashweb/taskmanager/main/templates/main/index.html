@@ -13,11 +13,9 @@
                     <div class="card">
                         <div class="card-details">
                         <p class="text-title mt-2 ml-2">{{ el.title }}</p>
-<!--                        <p class="text-boy_age">{{ el.boy_age }}</p>-->
-                        <p class="text-center mt-2 ml-2">{{ el.score }}</p>
-<!--                        <p class="text-body">{{ el.size }}</p>-->
+                            <p class="text-center mt-2 ml-2> ">(\ _/) <br> ( •.•) <br> <a class="py-2 text-white"> ss </a> /> <a class="py-2 text-white"> s </a> {{ el.score }}</p>
                         </div>
-                    <button class="card-button2">почитать</button>
+                    <button class="card-button2"><a class="py-2 text-white" href="{% url 'deed' %}">его поступки</a></button>
                     </div>
                 </div>
             {% endfor %}
@@ -31,9 +29,9 @@
                             из своей жизни еще до встречи с психотерапевтом</p>
                     </div>
                 <p class="text-center">*ты пока никого не добавила*</p>
-                <p class="text-center">
-                    <a class="text-dark">♡ hse girls project ♡</a>
-                </p>
+            <p class="text-center">
+                <a class="text-dark">♡ hse girls project ♡</a>
+            </p>
         </article>
     {% endif %}
 {% endblock %}
