@@ -9,6 +9,6 @@ urlpatterns = [
     path('signup', views.signup, name='signup'),
     path('signin', views.signin, name='signin'),
     path('signout', views.signout, name='signout'),
-    path('hisdeeds', views.deed, name='deed'),
+    path('deeds/<str:title>', views.deed, name='deed'),
     path('create', views.create, name='create') ##(вид в поисковой строке, обращение, функция во views)
 ]
