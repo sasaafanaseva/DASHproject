@@ -15,7 +15,7 @@
                         <p class="text-title mt-2 ml-2">{{ el.title }}</p>
                             <p class="text-center mt-2 ml-2> ">(\ _/) <br> ( •.•) <br> <a class="py-2 text-white"> ss </a> /> <a class="py-2 text-white"> s </a> {{ el.score }}</p>
                         </div>
-                    <button class="card-button2"><a class="py-2 text-white" href="{% url 'deed' %}">его поступки</a></button>
+                    <button class="card-button2 "><a class="py-2 text-white disabled-link" href="{% url 'deed' title=el.title %}">его поступки</a></button>
                     </div>
                 </div>
             {% endfor %}
