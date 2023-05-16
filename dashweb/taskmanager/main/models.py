@@ -1,8 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
+
 
 
 class Tasks(models.Model): #запоминаем поступок
+    user_id = models.CharField('ФИО', max_length=50, default="0")
     title = models.CharField('ФИО', max_length=50)
     boy_age = models.CharField('18', max_length=50)
     score = models.CharField('10', max_length=50, default="0")
@@ -59,6 +62,7 @@ class Tasks(models.Model): #запоминаем поступок
         ('Не помог', 'Не помог -- -4'),
         ('Не подождал', 'Не подождал -- -4'),
         ('Сравнил с бывшими девушками', 'Сравнил с бывшими девушками -- -4'),
+        ('Ответил "ок" на сообщение', 'Ответил "ок" на сообщение -- -4'),
         ('Забуллил', 'Забуллил -- -5'),
         ('Некрасиво пошутил', 'Некрасиво пошутил -- -5'),
         ('Забыл забрать тебя', 'Забыл забрать тебя -- -5'),
@@ -95,7 +99,10 @@ class Tasks(models.Model): #запоминаем поступок
         ('Бросил', 'Бросил -- -10'),
         ('Изменил', 'Изменил -- -10'),
     )
-    size = models.CharField(max_length=300, choices=sizes, default='Ничего не сделал')
+    size = models.TextField(choices=sizes, default='Ничего не сделал')
+
+    def get_absolute_url(self):
+        return reverse('boy-detail', args=[str(self.title)])
 
     def __str__(self):
         return self.title
