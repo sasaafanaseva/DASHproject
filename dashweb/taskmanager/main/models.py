@@ -5,7 +5,6 @@ from django.urls import reverse
 
 
 class Tasks(models.Model): #запоминаем поступок
-    user_id = models.CharField('ФИО', max_length=50, default="0")
     title = models.CharField('ФИО', max_length=50)
     boy_age = models.CharField('18', max_length=50)
     score = models.CharField('10', max_length=50, default="0")
@@ -110,3 +109,14 @@ class Tasks(models.Model): #запоминаем поступок
     class Meta:
         verbose_name = 'проступок'
         verbose_name_plural = 'проступки'
+
+
+class BoyGirlMatch(models.Model):
+    boy = models.ForeignKey(Tasks, on_delete=models.CASCADE)
+    girl = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __int__(self):
+        return self.boy
+
+    class Meta:
+        ordering = ["boy"]
