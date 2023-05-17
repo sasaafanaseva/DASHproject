@@ -3,18 +3,15 @@ from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
 from django.db.backends import sqlite3
 from django.shortcuts import render, redirect
-from .models import Tasks
+from .models import Tasks, BoyGirlMatch
 from .forms import TasksForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-import logging
 import sqlite3
 global mydict
 from django.db.models import F
-
-
 
 
 def boy_exists(paren): #проверка на существование парня в базе
@@ -135,14 +132,19 @@ def create_base():
             connection.close()
             print("Соединение с SQLite закрыто")
 
-
 def index(request):
     if request.user.is_authenticated:
-        id = request.user.id
-        tasks = Tasks.objects.filter(user_id=id)
+        boy_list = []
+        tasks = []
+        girl_find = request.user.id
+        q = BoyGirlMatch.objects.filter(girl__pk=girl_find)
+        for person in q:
+            boy_list.append(person.boy_id)
+        for i in boy_list:
+            tasks.append(Tasks.objects.get(pk=i))
+        # tasks = Tasks.objects.filter(pk=boy_list)
         return render(request, 'main/index.html', {'title': 'Главная страница сайта', 'tasks': tasks})
     else:
-        messages.warning(request, 'Вначале нужно зарегистрироваться')
         return HttpResponseRedirect('account')
 
 
@@ -248,9 +250,12 @@ def create(request): #создание парня
                     Tasks.objects.filter(title=form.data['title']).update(score=F("score") + ball, size=postupok)
                     messages.success(request, "твой парень уже есть в базе, ему добавлен новый поступок")
                 else:
-                    Tasks.objects.create(user_id=user_id, title=form.data['title'], boy_age=form.data['boy_age'],
+                    Tasks.objects.create(title=form.data['title'], boy_age=form.data['boy_age'],
                                          score=ball, size=form.data['size'])
                     messages.success(request, "ты его единственная, парень добавлен в базу")
+                kod = Tasks.objects.get(title=form.data['title']).id
+                a = BoyGirlMatch(boy=Tasks.objects.get(pk=kod), girl=User.objects.get(pk=user_id))
+                a.save()
                 return redirect('home')
             else:
                 error = "неправильно введены данные"
