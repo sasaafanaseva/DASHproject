@@ -139,7 +139,8 @@ def index(request):
         girl_find = request.user.id
         q = BoyGirlMatch.objects.filter(girl__pk=girl_find)
         for person in q:
-            boy_list.append(person.boy_id)
+            if boy_list.count(person.boy_id) == 0:
+                boy_list.append(person.boy_id)
         for i in boy_list:
             tasks.append(Tasks.objects.get(pk=i))
         # tasks = Tasks.objects.filter(pk=boy_list)
