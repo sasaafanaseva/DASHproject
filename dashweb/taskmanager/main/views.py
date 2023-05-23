@@ -1,31 +1,27 @@
-from .forms import LoginForm
+from .forms import LoginForm, ReviewForm
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
 from django.db.backends import sqlite3
 from django.shortcuts import render, redirect
-from .models import Tasks
+from .models import Tasks, BoyGirlMatch, Reviews
 from .forms import TasksForm
+from django.shortcuts import redirect
+from django.views.generic.base import View
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-import logging
 import sqlite3
 global mydict
 from django.db.models import F
 
-# from ..taskmanager import settings
-
-
-#from dashweb.taskmanager.taskmanager import settings
-
-## вставлено сашей
 
 def boy_exists(paren): #проверка на существование парня в базе
     is_present = Tasks.objects.filter(title=paren).exists()
     if is_present:
         return True
     return False
+
 
 def create_base():
     try:
@@ -40,6 +36,7 @@ def create_base():
         connection.commit()
         cursor.execute("""
                           INSERT INTO postupok(move, score) VALUES
+                          ('Ничего не сделал', 0),
                           ('Открыл дверь', 1),
                           ('Помог расчесать волосы', 1),
                           ('Сделал комплимент', 1),
@@ -128,9 +125,6 @@ def create_base():
                           ('Изменил', -10);
                         """)
         connection.commit()
-        # cursor.execute("""select * from po""")
-        # tables = cursor.fetchall()
-        # print(tables)
         cursor.close()
 
     except sqlite3.Error as error:
@@ -141,12 +135,22 @@ def create_base():
             connection.close()
             print("Соединение с SQLite закрыто")
 
-## нормальное продолжение полины
-
 
 def index(request):
-    tasks = Tasks.objects.all()
-    return render(request, 'main/index.html', {'title': 'Главная страница сайта', 'tasks': tasks})
+    if request.user.is_authenticated:
+        boy_list = []
+        tasks = []
+        girl_find = request.user.id
+        q = BoyGirlMatch.objects.filter(girl__pk=girl_find)
+        for person in q:
+            if boy_list.count(person.boy_id) == 0:
+                boy_list.append(person.boy_id)
+        for i in boy_list:
+            tasks.append(Tasks.objects.get(pk=i))
+        # tasks = Tasks.objects.filter(pk=boy_list)
+        return render(request, 'main/index.html', {'title': 'Главная страница сайта', 'tasks': tasks})
+    else:
+        return HttpResponseRedirect('account')
 
 
 def about(request):
@@ -162,9 +166,27 @@ def rating(request):
     return render(request, 'main/ratingGlobal.html', {'title': 'Главная страница сайта', 'tasks': tasks})
 
 
-def deed(request):
-    tasks = Tasks.objects.all()
+def deed(request, title):
+    tasks = Tasks.objects.filter(title=title)
     return render(request, "main/deeds.html", {'title': 'Главная страница сайта', 'tasks': tasks})
+
+
+def AddReview(request, id):
+    boy = Reviews.objects.get(id=id)
+    if request.method != "POST":
+        form = ReviewForm(request.POST or None)
+        if form.is_valid():
+            data = form.save(commit=False)
+            data.text = request.POST["text"]
+            data.girl_id = request.girl.pk
+            data.boy_id = boy.pk
+            data.save()
+            return redirect("main/comments.html", id)
+    else:
+        form = ReviewForm()
+
+    context = {"form": form, "boy": boy}
+    return render(request, 'main/comments.html', context)
 
 
 def signup(request):
@@ -176,28 +198,23 @@ def signup(request):
         pass2 = request.POST['pass2']
 
         if User.objects.filter(username=username):
-            messages.error(request, "Username already exist! Please try some other username.")
+            messages.error(request, "такое имя пользователя уже есть...")
             return redirect('home')
 
         if User.objects.filter(email=email).exists():
-            messages.error(request, "Email Already Registered!!")
-            return redirect('home')
-
-        if len(username) > 20:
-            messages.error(request, "Username must be under 20 charcters!!")
+            messages.error(request, "такой e-mail уже есть...")
             return redirect('home')
 
         if pass1 != pass2:
-            messages.error(request, "Passwords didn't matched!!")
+            messages.error(request, "пароли не совпали")
             return redirect('home')
 
         if not username.isalnum():
-            messages.error(request, "Username must be Alpha-Numeric!!")
+            messages.error(request, "имя пользователя должно быть буквенно-цифровым")
             return redirect('home')
 
         myuser = User.objects.create_user(username, email, pass1)
         myuser.first_name = fname
-        # myuser.is_active = False
         myuser.save()
         messages.success(request, "Ты новый пользователь приложения DASH!")
         user = authenticate(username=username, password=pass1)
@@ -208,89 +225,69 @@ def signup(request):
 
 
 def signin(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            raw_pass = form.cleaned_data.get('pass1')
-            # raw_pass = make_password(form.cleaned_data.get('pass1'))
-            user = form.save() #вот эти 2 строчки должны решать мою ошибку как говорят все сайты, но оно не работает
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            return redirect('home')
+    if not request.user.is_authenticated:
+        if request.method == 'POST':
+            fm = LoginForm(request=request, data=request.POST)
+            if fm.is_valid():
+                uname = fm.cleaned_data['username']
+                upass = fm.cleaned_data['password']
+                user = authenticate(username=uname, password=upass)
+                if user is not None:
+                    login(request, user)
+                    return redirect('home')
+        else:
+            fm = LoginForm()
+        return render(request, 'main/signin.html', {'form': fm})
     else:
-        form = LoginForm()
-    return render(request, 'main/signin.html', {'form': form})
-
-
-
-
-    # if request.method == 'POST':
-    #     username = request.POST.get('username')
-    #     password = request.POST.get('password')
-    #
-    #     user = authenticate(username=username, password=password)
-    #     if user:
-    #         login(request, user)
-    #         return redirect('home')
-    #     else:
-    #         messages.error(request, 'Your account is disabled')
-    #         return redirect('home')
-    # else:
-    #     return render(request, "main/signin.html")
-
-        # username = request.POST['username']
-        # pass1 = request.POST['pass1']
-        #
-        # user = authenticate(username=username, password=pass1)
-        # login(request, user)
-        # fname = user.first_name
-        # return render(request, "main/lk.html", {"fname": fname})
-
-        # if user is not None:
-        #     login(request, user)
-        #     fname = user.first_name
-        #     # messages.success(request, "Logged In Sucessfully!!")
-        #     return render(request, "main/lk.html", {"fname": fname})
-        # else:
-        #     messages.error(request, "idi nahui")
-        #     return redirect('signin')
-
-    # return render(request, "main/signin.html")
+        return HttpResponseRedirect('/')
 
 
 def signout(request):
     logout(request)
-    messages.success(request, "дам пока пока")
+    messages.success(request, "дам, пока пока")
     return redirect('home')
 
 
 def create(request): #создание парня
-    create_base()
-    # if not table_exists:
-    #     create_base()
-    error = ''
-    if request.method == 'POST':
-        form = TasksForm(request.POST) #имя парня и поступок лежат в переменной form
-        if form.is_valid():
-            with sqlite3.connect('sqlite_python.db') as connection:
-                cursor = connection.cursor()
-                cursor.execute(f"""select score from postupok WHERE move = '{form.data['size']}';""")
-                ball = int(cursor.fetchall()[0][0]) #получаем балл за поступок
-            if boy_exists(form.data['title']):
-                postupok = str(Tasks.objects.get(title=form.data['title']).size) + "\n" + str(form.data['size'])
-                Tasks.objects.filter(title=form.data['title']).update(score=F("score") + ball, size = postupok)
-                messages.success(request, "твой парень уже есть в базе, ему добавлен новый поступок")
+    if request.user.is_authenticated:
+        user_id = request.user.id
+        connection = sqlite3.connect('sqlite_python.db')
+        curs = connection.cursor()
+        curs.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='postupok' ''')
+        result = curs.fetchone()[0]
+        if result == 0:
+            create_base()
+        curs.close()
+        error = ''
+        if request.method == 'POST':
+            form = TasksForm(request.POST)  #имя парня и поступок лежат в переменной form
+            if form.is_valid():
+                with sqlite3.connect('sqlite_python.db') as connection:
+                    cursor = connection.cursor()
+                    cursor.execute(f"""select score from postupok WHERE move = '{form.data['size']}';""")
+                    ball = int(cursor.fetchall()[0][0])  # получаем балл за поступок
+                if boy_exists(form.data['title']):
+                    postupok = str(Tasks.objects.get(title=form.data['title']).size) + "\n" + str(form.data['size'])
+                    Tasks.objects.filter(title=form.data['title']).update(score=F("score") + ball, size=postupok)
+                    messages.success(request, "твой парень уже есть в базе, ему добавлен новый поступок")
+                else:
+                    Tasks.objects.create(title=form.data['title'], boy_age=form.data['boy_age'],
+                                         score=ball, size=form.data['size'])
+                    messages.success(request, "ты его единственная, парень добавлен в базу")
+                kod = Tasks.objects.get(title=form.data['title']).id
+                a = BoyGirlMatch(boy=Tasks.objects.get(pk=kod), girl=User.objects.get(pk=user_id))
+                a.save()
+                return redirect('home')
             else:
-                Tasks.objects.create(title = form.data['title'], boy_age = form.data['boy_age'], score = ball, size = form.data['size'])
-                messages.success(request, "ты его единственная, парень добавлен в базу")
-            return redirect('home')
-        else:
-            error = "неправильно введены данные"
+                error = "неправильно введены данные"
 
-    form = TasksForm()
-    context = {
-        'form': form,
-        'error': error
-    }
-    return render(request, 'main/create.html', context)
+        form = TasksForm()
+        context = {
+            'form': form,
+            'error': error
+        }
+        return render(request, 'main/create.html', context)
+    else:
+        messages.warning(request, 'Вначале нужно зарегистрироваться')
+        return HttpResponseRedirect('account')
+

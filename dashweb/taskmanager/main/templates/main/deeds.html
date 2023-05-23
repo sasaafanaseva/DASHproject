@@ -1,0 +1,20 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<table id="myTable">
+        <tr>
+            <th>его поступки</th>
+        </tr>
+        {% if tasks %}
+            {% for el in tasks %}
+                <tr>
+                    <td>{{ el.size }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+</table>
+<br>
+<br>
+<a class="py-2 text-dark" href="{% url 'home' %}">назад к парням</a>
+
+{% endblock %}

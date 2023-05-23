@@ -15,7 +15,16 @@
                         <p class="text-title mt-2 ml-2">{{ el.title }}</p>
                             <p class="text-center mt-2 ml-2> ">(\ _/) <br> ( •.•) <br> <a class="py-2 text-white"> ss </a> /> <a class="py-2 text-white"> s </a> {{ el.score }}</p>
                         </div>
-                    <button class="card-button2"><a class="py-2 text-white" href="{% url 'deed' %}">его поступки</a></button>
+                        <div class="row justify-content-center">
+                            <button class="card-button2"><a class="py-2 text-white disabled-link" href="{% url 'deed' title=el.title %}">его поступки</a></button>
+                            <div class="p-2">
+                                <a class="py-2 text-dark" href="{% url 'create' %}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             {% endfor %}

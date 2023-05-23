@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 
 class Tasks(models.Model): #запоминаем поступок
@@ -59,6 +60,7 @@ class Tasks(models.Model): #запоминаем поступок
         ('Не помог', 'Не помог -- -4'),
         ('Не подождал', 'Не подождал -- -4'),
         ('Сравнил с бывшими девушками', 'Сравнил с бывшими девушками -- -4'),
+        ('Ответил "ок" на сообщение', 'Ответил "ок" на сообщение -- -4'),
         ('Забуллил', 'Забуллил -- -5'),
         ('Некрасиво пошутил', 'Некрасиво пошутил -- -5'),
         ('Забыл забрать тебя', 'Забыл забрать тебя -- -5'),
@@ -95,7 +97,10 @@ class Tasks(models.Model): #запоминаем поступок
         ('Бросил', 'Бросил -- -10'),
         ('Изменил', 'Изменил -- -10'),
     )
-    size = models.CharField(max_length=300, choices=sizes, default='Ничего не сделал')
+    size = models.TextField(choices=sizes, default='Ничего не сделал')
+
+    def get_absolute_url(self):
+        return reverse('boy-detail', args=[str(self.title)])
 
     def __str__(self):
         return self.title
@@ -103,3 +108,27 @@ class Tasks(models.Model): #запоминаем поступок
     class Meta:
         verbose_name = 'проступок'
         verbose_name_plural = 'проступки'
+
+
+class BoyGirlMatch(models.Model):
+    boy = models.ForeignKey(Tasks, on_delete=models.CASCADE)
+    girl = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __int__(self):
+        return self.boy
+
+    class Meta:
+        ordering = ["boy"]
+
+
+class Reviews(models.Model):
+    text = models.TextField("если оценок стало мало", max_length=100)
+    girl = models.ForeignKey(User, on_delete=models.CASCADE)
+    boy = models.ForeignKey(Tasks, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.text} - {self.boy}"
+
+    class Meta:
+        verbose_name = 'комментарий'
+        verbose_name_plural = 'комментарии'

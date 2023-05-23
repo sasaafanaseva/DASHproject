@@ -1,0 +1,16 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+
+    <br>
+    <h3>Добавить комментарий</h3>
+    <br>
+    <form action="" method="post" class="mt-4">
+        {% csrf_token %}
+        <label for="">комментарий</label>
+        <textarea class="form-control boarder" rows="5" id="text" name="text" Required></textarea>
+        <br>
+        <button type="submit">сохранить</button>
+    </form>
+
+{% endblock %}
