@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import login_required
+
 from .forms import LoginForm, ReviewForm
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
@@ -171,6 +173,7 @@ def deed(request, title):
     return render(request, "main/deeds.html", {'title': 'Главная страница сайта', 'tasks': tasks})
 
 
+@login_required
 def AddReview(request, id):
     boy = Reviews.objects.get(id=id)
     if request.method != "POST":

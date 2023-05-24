@@ -10,6 +10,6 @@ urlpatterns = [
     path('signin', views.signin, name='signin'),
     path('signout', views.signout, name='signout'),
     path('deeds/<str:title>', views.deed, name='deed'),
-    path('review/<int:pk>/', views.AddReview, name='AddReview'),
+    path('review/<str:id>/', views.AddReview, name='AddReview'),
     path('create', views.create, name='create') ##(вид в поисковой строке, обращение, функция во views)
 ]

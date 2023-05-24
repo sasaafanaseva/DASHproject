@@ -122,12 +122,13 @@ class BoyGirlMatch(models.Model):
 
 
 class Reviews(models.Model):
-    text = models.TextField("если оценок стало мало", max_length=100)
-    girl = models.ForeignKey(User, on_delete=models.CASCADE)
     boy = models.ForeignKey(Tasks, on_delete=models.CASCADE)
+    girl = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField("если оценок стало мало", max_length=100)
+    # data_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.text} - {self.boy}"
+        return self.girl.username
 
     class Meta:
         verbose_name = 'комментарий'

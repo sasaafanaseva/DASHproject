@@ -1,16 +1,33 @@
-{% extends 'main/base.html' %}
+<!--{% extends 'main/base.html' %}-->
 
-{% block content %}
+<!--{% block content %}-->
 
-    <br>
-    <h3>Добавить комментарий</h3>
-    <br>
-    <form action="" method="post" class="mt-4">
-        {% csrf_token %}
-        <label for="">комментарий</label>
-        <textarea class="form-control boarder" rows="5" id="text" name="text" Required></textarea>
-        <br>
-        <button type="submit">сохранить</button>
-    </form>
+<!--    <br>-->
+<!--    <h3>Добавить комментарий</h3>-->
+<!--    <br>-->
+<!--    <form method="POST" action="{% url 'AddReview' boy.id %}">-->
+<!--        {% csrf_token %}-->
+<!--        <label for="">комментарий</label>-->
+<!--        <textarea class="form-control boarder" rows="5" id="text" name="text" Required></textarea>-->
+<!--        <br>-->
+<!--        <button type="submit">сохранить</button>-->
+<!--    </form>-->
 
-{% endblock %}
+<!--{% endblock %}-->
+
+    <section class="comments">
+                <h3>Comment</h3>
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="text-center">Add Review</h3>
+                            <form method="POST" action="">
+                                {% csrf_token %}
+                                <label for="text">Review</label>
+                                <textarea name="text" id="text" cols="30" rows="5" class="form-control"></textarea>
+
+                                <br>
+                                <input type="submit" class="btn btn-danger" value="Add Review">
+                            </form>
+                        </div>
+                    </div>
+    </section>

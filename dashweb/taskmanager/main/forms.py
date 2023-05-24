@@ -43,4 +43,10 @@ class ReviewForm(forms.ModelForm):
     class Meta:
         model = Reviews
         fields = ["text"]
+        widgets = {
+            "text": TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Введи'
+            })
+        }
 

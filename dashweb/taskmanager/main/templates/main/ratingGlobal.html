@@ -58,7 +58,7 @@
 <!--                    <td><div class="loader"></div></td>-->
 <!--                    <td></td>-->
                     <td></td>
-                    <td><a class="py-2 text-black disabled-link" href="/AddReview">()</a></td>
+                    <td><a class="py-2 text-white disabled-link" href="{% url 'AddReview' id=el.title %}">()</a></td>
                 </tr>
             {% endfor %}
         {% endif %}
