@@ -165,7 +165,8 @@ def home(request):
 
 def rating(request):
     tasks = Tasks.objects.all()
-    return render(request, 'main/ratingGlobal.html', {'title': 'Главная страница сайта', 'tasks': tasks})
+    reviews = Reviews.objects.all()
+    return render(request, 'main/ratingGlobal.html', {'title': 'Главная страница сайта', 'tasks': tasks, 'reviews': reviews})
 
 
 def deed(request, title):
@@ -174,22 +175,32 @@ def deed(request, title):
 
 
 @login_required
-def AddReview(request, id):
-    boy = Reviews.objects.get(id=id)
-    if request.method != "POST":
-        form = ReviewForm(request.POST or None)
-        if form.is_valid():
-            data = form.save(commit=False)
-            data.text = request.POST["text"]
-            data.girl_id = request.girl.pk
-            data.boy_id = boy.pk
-            data.save()
-            return redirect("main/comments.html", id)
-    else:
+def comments(request, id):
+    reviews = Reviews.objects.all()
+    # boy = Tasks.objects.get(id=id) #берем имя мальчика
+    # print(boy)
+    error = ''
+    if request.user.is_authenticated:
+        girl_id = request.user.id
+        if request.method == 'POST':
+            form = ReviewForm(request.POST)
+            if form.is_valid():
+                boy = Tasks.objects.get(id=id)
+                girl = User.objects.get(id=girl_id)
+                a = Reviews(boy=boy, girl=girl, text=form.data['text'])
+                a.save()
+                return render(request, "main/comments.html", {'title': 'Главная страница сайта', 'reviews': reviews})
+            else:
+                error = "неправильно введены данные"
         form = ReviewForm()
-
-    context = {"form": form, "boy": boy}
-    return render(request, 'main/comments.html', context)
+        context = {
+            'form': form,
+            'error': error
+        }
+        return render(request, 'main/comments.html', context)
+    else:
+        messages.warning(request, 'Вначале нужно зарегистрироваться')
+        return HttpResponseRedirect('account')
 
 
 def signup(request):
