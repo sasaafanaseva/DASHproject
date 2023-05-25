@@ -10,6 +10,7 @@ urlpatterns = [
     path('signin', views.signin, name='signin'),
     path('signout', views.signout, name='signout'),
     path('deeds/<str:title>', views.deed, name='deed'),
-    path('create', views.create, name='create'),##(вид в поисковой строке, обращение, функция во views)
+    path('add/<str:title>', views.add, name='add'),
+    path('create', views.create, name='create'), ##(вид в поисковой строке, обращение, функция во views)
     path('comments/<int:id>', views.comments, name='comments')
 ]
