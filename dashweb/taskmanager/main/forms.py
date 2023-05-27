@@ -50,3 +50,14 @@ class ReviewForm(forms.ModelForm):
             })
         }
 
+
+class Tasks_addForm(ModelForm): #добавление поступков парню
+    class Meta:
+        model = Tasks
+        fields = ["size"]
+        widgets = {
+            "size": TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'выбор:'
+            }),
+        }

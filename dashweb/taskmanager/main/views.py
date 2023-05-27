@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 
-from .forms import LoginForm, ReviewForm
+from .forms import LoginForm, ReviewForm, Tasks_addForm
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
 from django.db.backends import sqlite3
@@ -154,19 +154,53 @@ def index(request):
     else:
         return HttpResponseRedirect('account')
 
+#это моя работа
 
 def about(request):
     return render(request, 'main/lk.html')
-
 
 def home(request):
     return render(request, "main/lk.html")
 
 
+def add(request, title):
+    if request.user.is_authenticated:
+        user_id = request.user.id
+        error = ''
+        if request.method == 'POST':
+            form = Tasks_addForm(request.POST)  # поступок лежит в переменной form
+            if form.is_valid():
+                with sqlite3.connect('sqlite_python.db') as connection:
+                    cursor = connection.cursor()
+                    cursor.execute(f"""select score from postupok WHERE move = '{form.data['size']}';""")
+                    ball = int(cursor.fetchall()[0][0])  # получаем балл за поступок
+                postupok = str(Tasks.objects.get(title=title).size) + "\n" + str(form.data['size'])
+                Tasks.objects.filter(title=title).update(score=F("score") + ball, size=postupok)
+                messages.success(request, "твоему парню добавлен новый поступок")
+                kod = Tasks.objects.get(title=title).id
+                a = BoyGirlMatch(boy=Tasks.objects.get(pk=kod), girl=User.objects.get(pk=user_id))
+                a.save()
+                return redirect('home')
+            else:
+                error = "неправильно введены данные"
+        form = Tasks_addForm()
+        context = {
+            'form': form,
+            'error': error
+        }
+        return render(request, 'main/add.html', context)
+    else:
+        messages.warning(request, 'Вначале нужно зарегистрироваться')
+        return HttpResponseRedirect('account')
+
+
+    return render(request, "main/lk.html")
+
 def rating(request):
     tasks = Tasks.objects.all()
     reviews = Reviews.objects.all()
     return render(request, 'main/ratingGlobal.html', {'title': 'Главная страница сайта', 'tasks': tasks, 'reviews': reviews})
+
 
 
 def deed(request, title):
@@ -201,6 +235,7 @@ def comments(request, id):
     else:
         messages.warning(request, 'Вначале нужно зарегистрироваться')
         return HttpResponseRedirect('account')
+
 
 
 def signup(request):
@@ -274,7 +309,7 @@ def create(request): #создание парня
         curs.close()
         error = ''
         if request.method == 'POST':
-            form = TasksForm(request.POST)  #имя парня и поступок лежат в переменной form
+            form = TasksForm(request.POST)  #имя парня, возраст и поступок лежат в переменной form
             if form.is_valid():
                 with sqlite3.connect('sqlite_python.db') as connection:
                     cursor = connection.cursor()

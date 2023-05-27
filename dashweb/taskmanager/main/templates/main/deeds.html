@@ -8,7 +8,7 @@
         {% if tasks %}
             {% for el in tasks %}
                 <tr>
-                    <td>{{ el.size }}</td>
+                    <td>{{ el.size|linebreaks }}</td>
                 </tr>
             {% endfor %}
         {% endif %}
