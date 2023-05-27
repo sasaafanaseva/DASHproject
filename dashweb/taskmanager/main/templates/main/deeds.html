@@ -13,6 +13,18 @@
             {% endfor %}
         {% endif %}
 </table>
+
+<section class="deeds">
+    <br>
+    <br>
+    <form method="post">
+        {% csrf_token %}
+        <button> dam </button>
+        <br>
+        <br>
+    </form>
+</section>
+
 <br>
 <br>
 <a class="py-2 text-dark" href="{% url 'home' %}">назад к парням</a>
