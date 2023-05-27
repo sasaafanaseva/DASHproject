@@ -12,5 +12,5 @@ urlpatterns = [
     path('deeds/<str:title>', views.deed, name='deed'),
     path('add/<str:title>', views.add, name='add'),
     path('create', views.create, name='create'), ##(вид в поисковой строке, обращение, функция во views)
-    path('comments/<int:id>', views.comments, name='comments')
+    path('comments/<str:title>', views.comments, name='comments')
 ]
