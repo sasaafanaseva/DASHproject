@@ -142,19 +142,22 @@ def index(request):
     if request.user.is_authenticated:
         boy_list = []
         tasks = []
+        my_boy = 0
         girl_find = request.user.id
         q = BoyGirlMatch.objects.filter(girl__pk=girl_find)
         for person in q:
             if boy_list.count(person.boy_id) == 0:
                 boy_list.append(person.boy_id)
         for i in boy_list:
-            tasks.append(Tasks.objects.get(pk=i))
-        # tasks = Tasks.objects.filter(pk=boy_list)
-        return render(request, 'main/index.html', {'title': 'Главная страница сайта', 'tasks': tasks})
+            dash = BoyGirlMatch.objects.get(boy_id=i, girl_id=girl_find).dash
+            if dash == "дам":
+                my_boy = Tasks.objects.get(pk=i)
+            else:
+                tasks.append(Tasks.objects.get(pk=i))
+        return render(request, 'main/index.html', {'title': 'Главная страница сайта', 'tasks': tasks, 'my_boy': my_boy})
     else:
         return HttpResponseRedirect('account')
 
-#это моя работа
 
 def about(request):
     return render(request, 'main/lk.html')
@@ -177,9 +180,8 @@ def add(request, title):
                 postupok = str(Tasks.objects.get(title=title).size) + "\n" + str(form.data['size'])
                 Tasks.objects.filter(title=title).update(score=F("score") + ball, size=postupok)
                 messages.success(request, "твоему парню добавлен новый поступок")
-                kod = Tasks.objects.get(title=title).id
-                a = BoyGirlMatch(boy=Tasks.objects.get(pk=kod), girl=User.objects.get(pk=user_id))
-                a.save()
+                # kod = Tasks.objects.get(title=title).id
+                # BoyGirlMatch.objects.get_or_create(boy=Tasks.objects.get(pk=kod), girl=User.objects.get(pk=user_id))
                 return redirect('home')
             else:
                 error = "неправильно введены данные"
@@ -194,36 +196,45 @@ def add(request, title):
         return HttpResponseRedirect('account')
 
 
-    return render(request, "main/lk.html")
-
 def rating(request):
     tasks = Tasks.objects.all()
-    reviews = Reviews.objects.all()
-    return render(request, 'main/ratingGlobal.html', {'title': 'Главная страница сайта', 'tasks': tasks, 'reviews': reviews})
-
+    return render(request, 'main/ratingGlobal.html', {'title': 'Главная страница сайта', 'tasks': tasks})
 
 
 def deed(request, title):
+    boy = Tasks.objects.get(title=title)
     tasks = Tasks.objects.filter(title=title)
-    return render(request, "main/deeds.html", {'title': 'Главная страница сайта', 'tasks': tasks})
+    if request.user.is_authenticated:
+        girl_id = request.user.id
+        if request.method == 'POST':
+            girl = User.objects.get(pk=girl_id)
+            get = BoyGirlMatch.objects.filter(girl=girl)
+            for i in get:
+                if i.dash == "дам":
+                    messages.warning(request, 'ты тупая пизда, нужно выбрать одного!')
+                    return redirect('home')
+            BoyGirlMatch.objects.filter(boy=boy, girl=girl).update(dash="дам")
+            return redirect('home')
+        return render(request, "main/deeds.html", {'title': 'Главная страница сайта', 'tasks': tasks})
+    else:
+        messages.warning(request, 'Вначале нужно зарегистрироваться')
+        return HttpResponseRedirect('account')
 
 
 @login_required
-def comments(request, id):
-    reviews = Reviews.objects.all()
-    # boy = Tasks.objects.get(id=id) #берем имя мальчика
-    # print(boy)
-    error = ''
+def comments(request, title):
+    boy = Tasks.objects.get(title=title)
+    boy_id = boy.id
+    review = Reviews.objects.filter(boy_id=boy_id)
+    error=''
     if request.user.is_authenticated:
         girl_id = request.user.id
         if request.method == 'POST':
             form = ReviewForm(request.POST)
             if form.is_valid():
-                boy = Tasks.objects.get(id=id)
-                girl = User.objects.get(id=girl_id)
+                girl = User.objects.get(pk=girl_id)
                 a = Reviews(boy=boy, girl=girl, text=form.data['text'])
                 a.save()
-                return render(request, "main/comments.html", {'title': 'Главная страница сайта', 'reviews': reviews})
             else:
                 error = "неправильно введены данные"
         form = ReviewForm()
@@ -231,11 +242,10 @@ def comments(request, id):
             'form': form,
             'error': error
         }
-        return render(request, 'main/comments.html', context)
+        return render(request, 'main/comments.html', {'title': 'комментарии', 'reviews': review})
     else:
         messages.warning(request, 'Вначале нужно зарегистрироваться')
         return HttpResponseRedirect('account')
-
 
 
 def signup(request):
@@ -324,8 +334,7 @@ def create(request): #создание парня
                                          score=ball, size=form.data['size'])
                     messages.success(request, "ты его единственная, парень добавлен в базу")
                 kod = Tasks.objects.get(title=form.data['title']).id
-                a = BoyGirlMatch(boy=Tasks.objects.get(pk=kod), girl=User.objects.get(pk=user_id))
-                a.save()
+                BoyGirlMatch.objects.get_or_create(boy=Tasks.objects.get(pk=kod), girl=User.objects.get(pk=user_id))
                 return redirect('home')
             else:
                 error = "неправильно введены данные"

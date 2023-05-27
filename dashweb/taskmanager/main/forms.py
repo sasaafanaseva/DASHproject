@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import AuthenticationForm, UsernameField
 
-from .models import Tasks, Reviews
+from .models import Tasks, Reviews, BoyGirlMatch
 from django.forms import ModelForm, TextInput, Textarea
 from django import forms
 from django.utils.translation import gettext, gettext_lazy as _
@@ -39,7 +39,7 @@ class TasksForm(ModelForm): #класс для парня
         }
 
 
-class ReviewForm(forms.ModelForm):
+class ReviewForm(ModelForm):
     class Meta:
         model = Reviews
         fields = ["text"]
@@ -47,9 +47,8 @@ class ReviewForm(forms.ModelForm):
             "text": TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Введи'
-            })
+            }),
         }
-
 
 class Tasks_addForm(ModelForm): #добавление поступков парню
     class Meta:
