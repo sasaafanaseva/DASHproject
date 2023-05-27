@@ -2,23 +2,20 @@
 
 {% block content %}
 
-<table id="myTable">
-        <tr>
-            <th>комментарии</th>
-        </tr>
-        {% if reviews %}
-            {% for el in reviews %}
-                <tr>
-                    <td>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
-                        </svg>
-                        {{ el.text }}
-                    </td>
-                </tr>
-            {% endfor %}
-        {% endif %}
-</table>
+{% if reviews %}
+<div class="row justify-content-center">
+    {% for el in reviews %}
+                    <div class="alert-warning mt-2 ml-2">
+                        <div class="card">
+                            <div class="card-details">
+                                <p class="text-title mt-2 ml-2">{{ el.text }}</p>
+                            </div>
+                        </div>
+                    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
 
 <section class="comments">
     <h5>если оценок стало мало*</h5>
