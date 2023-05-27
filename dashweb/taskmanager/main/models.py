@@ -113,6 +113,12 @@ class Tasks(models.Model): #запоминаем поступок
 class BoyGirlMatch(models.Model):
     boy = models.ForeignKey(Tasks, on_delete=models.CASCADE)
     girl = models.ForeignKey(User, on_delete=models.CASCADE)
+    dashes = (
+        ('дам', 'дам'),
+        ('не дам', 'не дам'),
+        ('пока не решила', 'пока не решила')
+    )
+    dash = models.TextField(choices=dashes, default='пока не решила')
 
     def __int__(self):
         return self.boy
@@ -125,7 +131,6 @@ class Reviews(models.Model):
     boy = models.ForeignKey(Tasks, on_delete=models.CASCADE)
     girl = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField("если оценок стало мало", max_length=100)
-    # data_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.girl.username
