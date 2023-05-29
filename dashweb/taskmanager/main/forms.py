@@ -1,14 +1,15 @@
-from .models import Tasks
+from django.contrib.auth.forms import AuthenticationForm, UsernameField
+
+from .models import Tasks, Reviews, BoyGirlMatch
 from django.forms import ModelForm, TextInput, Textarea
 from django import forms
+from django.utils.translation import gettext, gettext_lazy as _
 
 
-class LoginForm(forms.Form):
-    # fname = forms.CharField(max_length=30, required=True, help_text='Required.')
-    # email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
-    username = forms.CharField(label=u'ник')
-    pass1 = forms.CharField(label=u'пароль')
-    next = forms.CharField(widget=forms.HiddenInput(), required=False)
+class LoginForm(AuthenticationForm):
+    username = UsernameField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control'}))
+    password = forms.CharField(label=_("Password"), strip=False, widget=forms.PasswordInput(
+        attrs={'autocomplete': "current-password", 'class': 'form-control'}))
 
     class Meta:
         model = Tasks
@@ -31,6 +32,30 @@ class TasksForm(ModelForm): #класс для парня
                 'class': 'form-control',
                 'placeholder': 'Введи возраст'
             }),
+            "size": TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'выбор:'
+            }),
+        }
+
+
+class ReviewForm(ModelForm):
+    class Meta:
+        model = Reviews
+        fields = ["text"]
+        widgets = {
+            "text": TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Введи'
+            }),
+        }
+
+
+class Tasks_addForm(ModelForm): #добавление поступков парню
+    class Meta:
+        model = Tasks
+        fields = ["size"]
+        widgets = {
             "size": TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'выбор:'
