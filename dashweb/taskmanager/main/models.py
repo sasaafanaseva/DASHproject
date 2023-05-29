@@ -97,7 +97,7 @@ class Tasks(models.Model): #запоминаем поступок
         ('Бросил', 'Бросил -- -10'),
         ('Изменил', 'Изменил -- -10'),
     )
-    size = models.CharField(max_length=300, choices=sizes, default='Ничего не сделал')
+    size = models.TextField(choices=sizes, default='Ничего не сделал')
 
     def get_absolute_url(self):
         return reverse('boy-detail', args=[str(self.title)])
@@ -108,3 +108,33 @@ class Tasks(models.Model): #запоминаем поступок
     class Meta:
         verbose_name = 'проступок'
         verbose_name_plural = 'проступки'
+
+
+class BoyGirlMatch(models.Model):
+    boy = models.ForeignKey(Tasks, on_delete=models.CASCADE)
+    girl = models.ForeignKey(User, on_delete=models.CASCADE)
+    dashes = (
+        ('дам', 'дам'),
+        ('не дам', 'не дам'),
+        ('пока не решила', 'пока не решила')
+    )
+    dash = models.TextField(choices=dashes, default='пока не решила')
+
+    def __int__(self):
+        return self.boy
+
+    class Meta:
+        ordering = ["boy"]
+
+
+class Reviews(models.Model):
+    boy = models.ForeignKey(Tasks, on_delete=models.CASCADE)
+    girl = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField("если оценок стало мало", max_length=100)
+
+    def __str__(self):
+        return self.girl.username
+
+    class Meta:
+        verbose_name = 'комментарий'
+        verbose_name_plural = 'комментарии'
