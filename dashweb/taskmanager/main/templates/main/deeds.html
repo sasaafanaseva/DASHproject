@@ -1,0 +1,38 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<table id="myTable">
+        <tr>
+            <th>Его поступки</th>
+        </tr>
+        {% if tasks %}
+            {% for el in tasks %}
+                <tr>
+                    <td>{{ el.size|linebreaks }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+</table>
+
+<section class="deeds">
+    <br>
+    <br>
+    <form method="post">
+        {% csrf_token %}
+        {% if my_boy %}
+            <p>нажав на кнопку, ты можешь открепить парня в своем списке</p>
+            <button> NEdam </button>
+        {% else %}
+            <p>нажав на кнопку, ты можешь закрепить парня в своем списке</p>
+            <button> dam </button>
+        {% endif %}
+        <br>
+        <br>
+    </form>
+</section>
+
+<br>
+<br>
+<a class="py-2 text-dark" href="{% url 'home' %}">назад к парням</a>
+
+{% endblock %}
