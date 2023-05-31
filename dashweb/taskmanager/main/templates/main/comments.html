@@ -1,0 +1,37 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<table id="myTable">
+        <tr>
+            <th>комментарии</th>
+        </tr>
+        {% if reviews %}
+            {% for el in reviews %}
+                        <tr>
+                            <td>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+                                </svg>
+                                {{ el.text }}
+                            </td>
+                        </tr>
+            {% endfor %}
+        {% endif %}
+</table>
+<br>
+<br>
+
+<section class="comments">
+    <h5>если оценок стало мало*</h5>
+    <a>тут ты можешь добавлять комментарии для парня</a>
+    <br>
+    <br>
+    <form method="POST" action="">
+        {% csrf_token %}
+        <textarea name="text" id="text" cols="30" rows="5" class="form-control"></textarea>
+        <br>
+        <button type="submit">отправить</button>
+    </form>
+</section>
+
+{% endblock %}
