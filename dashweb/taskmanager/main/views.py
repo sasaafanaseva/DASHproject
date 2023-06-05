@@ -153,7 +153,7 @@ def index(request):
                 boy_list.append(person.boy_id)
         for i in boy_list:
             dash = BoyGirlMatch.objects.get(boy_id=i, girl_id=girl_find).dash
-            if dash == "дам":
+            if dash == "закреп":
                 my_boy = Tasks.objects.get(pk=i)
             else:
                 tasks.append(Tasks.objects.get(pk=i))
@@ -213,7 +213,7 @@ def deed(request, title):
             boy_list.append(person.boy_id)
     for i in boy_list:
         dash = BoyGirlMatch.objects.get(boy_id=i, girl_id=girl_find).dash
-        if dash == "дам":
+        if dash == "закреп":
             my_boy = Tasks.objects.get(pk=i)
 
     boy = Tasks.objects.get(title=title)
@@ -229,10 +229,10 @@ def deed(request, title):
             get = BoyGirlMatch.objects.filter(girl=girl)
             if no_red_flag == False:
                 for i in get:
-                    if i.dash == "дам":
+                    if i.dash == "закреп":
                         messages.warning(request, 'прости, нужно выбрать одного!')
                         return redirect('home')
-                BoyGirlMatch.objects.filter(boy=boy, girl=girl).update(dash="дам")
+                BoyGirlMatch.objects.filter(boy=boy, girl=girl).update(dash="закреп")
                 return redirect('home')
             else:
                 BoyGirlMatch.objects.filter(boy=boy, girl=girl).update(dash="пока не решила")
