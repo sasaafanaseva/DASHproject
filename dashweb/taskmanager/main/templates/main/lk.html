@@ -16,7 +16,7 @@
     </form>
     <br>
     {% if user.is_authenticated %}
-    <h3>добро пожаловать в приложение {{ fname }}</h3>
+    <h3>добро пожаловать в приложение {{ user.username }}</h3>
     <br>
 
     <button type="submit"><a href="/signout"> SignOut </a></button>
