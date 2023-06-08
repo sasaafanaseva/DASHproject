@@ -117,8 +117,7 @@ class BoyGirlMatch(models.Model):
     boy = models.ForeignKey(Tasks, on_delete=models.CASCADE)
     girl = models.ForeignKey(User, on_delete=models.CASCADE)
     dashes = (
-        ('дам', 'дам'),
-        ('не дам', 'не дам'),
+        ('закреп', 'закреп'),
         ('пока не решила', 'пока не решила')
     )
     dash = models.TextField(choices=dashes, default='пока не решила')
