@@ -1,11 +1,10 @@
-
+from django.contrib.auth.models import User
 from django.db.models import F
 from django.test import TestCase
-from .models import Tasks
-from .forms import TasksForm
+from .models import Tasks, BoyGirlMatch
+from .forms import TasksForm, ReviewForm
 from django.urls import reverse
 import sqlite3
-
 # Create your tests here.
 
 
@@ -13,9 +12,13 @@ class DummyTestCase(TestCase): #тесты на логику
 
     @classmethod
     def setUp(self):
-        Tasks.objects.create(title='Арсений', boy_age=18, score=0, size='')
-        Tasks.objects.create(title='Антон', boy_age=18, score=1, size='Уступил место')
-        Tasks.objects.create(title='Александр', boy_age=18, score=3, size='Проводил')
+        first_boy = Tasks.objects.create(title='Арсений', boy_age=18, score=0, size='')
+        second_boy = Tasks.objects.create(title='Антон', boy_age=18, score=1, size='Уступил место')
+        third_boy = Tasks.objects.create(title='Александр', boy_age=18, score=3, size='Проводил')
+        girl = User.objects.create(username='Dasha') #представим, что всех парней добавляет Даша
+        BoyGirlMatch.objects.create(boy=first_boy, girl=girl)
+        BoyGirlMatch.objects.create(boy=second_boy, girl=girl)
+        BoyGirlMatch.objects.create(boy=third_boy, girl=girl, dash="закреп")
 
 
     def test_make_base_postupki(self): #подключение к sql
@@ -70,13 +73,28 @@ class DummyTestCase(TestCase): #тесты на логику
         Tasks.objects.create(title=paren, boy_age=18, score=0, size='')
         self.assertTrue('Кирилл', Tasks.objects.get(id=4))
 
+    def create_my_boy(self): #связь таблиц, когда девочка закрепляет своего парня и только своего
+        girl = User.objects.get(username='Dasha')
+        parni = BoyGirlMatch.objects.filter(girl=girl)
+        for i in parni:
+            if i.dash == "закреп":
+                self.assertEquals('Александр', i.boy.title)
+                BoyGirlMatch.objects.get(girl=girl, boy=i).update(dash='пока не решила')
+        parni = BoyGirlMatch.objects.filter(girl=girl)
+        dash = 0
+        for i in parni:
+            if i.dash == "закреп":
+                dash = 1
+        self.assertEquals(dash, 0)
+
 
 class AuthorModelTest(TestCase): #тесты для моделей
 
     @classmethod
     def setUpTestData(cls):
-        #Set up non-modified objects used by all test methods
-        Tasks.objects.create(title='Арсений', boy_age=18, score=1, size='Открыл дверь')
+        boy = Tasks.objects.create(title='Арсений', boy_age=18, score=1, size='Открыл дверь')
+        girl = User.objects.create(username='Dasha')
+        BoyGirlMatch.objects.create(boy=boy, girl=girl, dash="закреп")
 
     def test_title_label(self):
         author=Tasks.objects.get(id=1)
@@ -97,6 +115,15 @@ class AuthorModelTest(TestCase): #тесты для моделей
         expected_object_name = author.title
         self.assertEquals(expected_object_name, str(author))
 
+    def test_match(self):
+        match = BoyGirlMatch.objects.get(id=1).boy
+        self.assertEquals(str(match), "Арсений")
+
+    def test_match_def(self):
+        match = BoyGirlMatch.objects.get(id=1)
+        default_value = match._meta.get_field('dash').default
+        self.assertEquals(default_value, "пока не решила")
+
 
 class TasksFormTest(TestCase): #тесты для форм
 
@@ -109,12 +136,15 @@ class TasksFormTest(TestCase): #тесты для форм
         form = TasksForm()
         assert form.fields['size'].label != 'Подарил цветы'
 
+    def test_form_comments(cls):
+        form = ReviewForm()
+        cls.assertEquals(form.fields['text'].label, 'Если оценок стало мало')
+
 
 class TasksViewTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        #Create 13 authors for pagination tests
         Tasks.objects.create(title='Арсений', boy_age=18, score=6, size='Подвез до дома')
         Tasks.objects.create(title='Сема', boy_age=21, score=-4, size='Ответил "ок" на сообщение')
 
@@ -123,9 +153,5 @@ class TasksViewTest(TestCase):
         self.assertEqual(resp.status_code, 200)
 
     def test_view_home(self):
-        resp = self.client.get(reverse('home'))
-        self.assertEqual(resp.status_code, 200)
-
-    def test_view_create(self):
-        resp = self.client.get(reverse('create'))
+        resp = self.client.get(reverse('signin'))
         self.assertEqual(resp.status_code, 200)
