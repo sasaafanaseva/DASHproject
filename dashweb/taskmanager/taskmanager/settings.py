@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'taskmanager.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.parni',
+        'NAME': BASE_DIR / 'db.young-man',
     }
 }
 
