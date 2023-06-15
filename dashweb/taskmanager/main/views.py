@@ -29,15 +29,14 @@ def create_base():
     try:
         connection = sqlite3.connect('sqlite_python.db')
         cursor = connection.cursor()
-        print("База данных создана и успешно подключена к SQLite")
         cursor.execute(
-            """CREATE TABLE postupok(
+            """CREATE TABLE postupki(
                 move text,
                 score int);
             """)
         connection.commit()
         cursor.execute("""
-                          INSERT INTO postupok(move, score) VALUES
+                          INSERT INTO postupki(move, score) VALUES
                           ('Открыл дверь', 1),
                           ('Помог расчесать волосы', 1),
                           ('Сделал комплимент', 1),
@@ -81,6 +80,11 @@ def create_base():
                           ('Внимательно слушал тебя', 9),
                           ('Устроил романтическое свидание', 10),
                           ('Подарил путешествие', 10),
+                          ('Смотрел со мной беременна в 16', 4),
+                          ('Поменторил проект', 10),
+                          ('Включил Егора Крида', 10),
+                          ('Поставил клоуна', -2),
+                          ('Приехал неожиданно из другой страны', 10),
                           ('Разбудил', -3),
                           ('Разозлил', -3),
                           ('Не проявил интерес', -4),
@@ -88,7 +92,7 @@ def create_base():
                           ('Критиковал мой образ', -4),
                           ('Устроил в квартире срач', -4),
                           ('Не помог', -4),
-                          ('ответил "ок" на сообщение', -4),
+                          ('ответил "ок" на сообщение', -2),
                           ('Не подождал', -4),
                           ('Сравнил с бывшими девушками', -4),
                           ('Забуллил', -5),
@@ -179,7 +183,7 @@ def add(request, title):
             if form.is_valid():
                 with sqlite3.connect('sqlite_python.db') as connection:
                     cursor = connection.cursor()
-                    cursor.execute(f"""select score from postupok WHERE move = '{form.data['size']}';""")
+                    cursor.execute(f"""select score from postupki WHERE move = '{form.data['size']}';""")
                     ball = int(cursor.fetchall()[0][0])  # получаем балл за поступок
                 postupok = str(Tasks.objects.get(title=title).size) + "\n" + str(form.data['size'])
                 Tasks.objects.filter(title=title).update(score=F("score") + ball, size=postupok)
@@ -334,7 +338,7 @@ def create(request): #создание парня
         user_id = request.user.id
         connection = sqlite3.connect('sqlite_python.db')
         curs = connection.cursor()
-        curs.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='postupok' ''')
+        curs.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='postupki' ''')
         result = curs.fetchone()[0]
         if result == 0:
             create_base()
@@ -345,7 +349,7 @@ def create(request): #создание парня
             if form.is_valid():
                 with sqlite3.connect('sqlite_python.db') as connection:
                     cursor = connection.cursor()
-                    cursor.execute(f"""select score from postupok WHERE move = '{form.data['size']}';""")
+                    cursor.execute(f"""select score from postupki WHERE move = '{form.data['size']}';""")
                     ball = int(cursor.fetchall()[0][0])  # получаем балл за поступок
                 if boy_exists(form.data['title']):
                     postupok = str(Tasks.objects.get(title=form.data['title']).size) + "\n" + str(form.data['size'])
